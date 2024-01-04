@@ -1,0 +1,112 @@
+:: StoryTitle
+BLA
+
+
+:: StoryData
+{
+  "ifid": "84513303-33A0-470B-BC51-23DDDD00D2D1",
+  "format": "Snowman",
+  "format-version": "2.0.2",
+  "start": "Start",
+  "zoom": 0.6
+}
+
+
+:: Final page {"position":"600,1050","size":"100,100"}
+Your ID is <%= window.story.state.uid %>
+
+Logged data is as follows:
+
+<%= JSON.stringify(window.story.state.hash) %>
+
+<%
+  $.ajax({
+    url: 'https://www.iiojun.com/php/tlog.php',
+    type: 'POST',
+    data: { 'uid': window.story.state.uid,
+                'log': JSON.stringify(window.story.state.hash) },
+    dataType: 'json'
+  });
+%>
+
+
+:: Goal {"position":"600,900","size":"100,100"}
+We are in the Goal.
+
+Go to [[Final page]]
+
+
+:: Page A {"position":"400,450","size":"100,100"}
+We're in "Page A"
+
+Go to the [[The 2nd Question]]
+
+
+:: Page B {"position":"600,450","size":"100,100"}
+We're in "Page B"
+
+Go to the [[The 2nd Question]]
+
+
+:: Page C {"position":"775,450","size":"100,100"}
+We're in "Page C"
+
+Go to the [[The 2nd Question]]
+
+
+:: Page D {"position":"400,750","size":"100,100"}
+We're in "Page D"
+
+Go to the [[Goal]]
+
+
+:: Page E {"position":"600,750","size":"100,100"}
+We're in "Page E"
+
+Go to the [[Goal]]
+
+
+:: Page F {"position":"800,750","size":"100,100"}
+We're in "Page F"
+
+Go to the [[Goal]]
+
+
+:: Start {"position":"600,300","size":"100,100"}
+This is the starting point.
+
+Question 1:
+
+Go to [[Page A]] or [[Page B]] or [[Page C]]
+
+
+:: The 2nd Question {"position":"600,600","size":"100,100"}
+We are in the 2nd question.
+
+Question 2:
+
+Go to [[Page D]] or [[Page E]] or [[Page F]]
+
+
+:: StoryScript [script]
+window.story.state.hash = {};
+
+// create a unique ID
+window.story.state.uid = Date.now().toString(16) +
+            Math.floor(1000 * Math.random()).toString(16);
+
+$(window).on('sm.passage.shown', 
+             function (eventObject, passageObject) {
+  window.story.state.
+    hash[passageObject.passage.name] = eventObject.timeStamp
+
+  // disable the browser's back button
+  history.pushState(null, null, null);
+  return;
+});
+
+// to show the alert to quit the game
+$(window).on('beforeunload', function (event) {
+  event.preventDefault();
+  return;
+});
